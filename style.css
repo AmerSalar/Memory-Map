@@ -1,0 +1,80 @@
+body {
+    
+    margin: 0%;
+    padding: 0%;
+    background-color: #dcd4ce;
+    color: #7e654b;
+    font-family: 'consolas';
+    display: flex;
+    flex-direction: column;
+}
+.header {
+    height: 10dvh;
+    width: 100%;
+}
+.logo {
+    width: 37px;
+    z-index: 1;
+    padding: 3px;
+    margin: 20px;
+    border-radius: 25px;
+    border-right: solid 5px #efefef;
+    border-bottom: solid 5px #efefef;
+    font-size: 1.25rem;
+}
+.map-cont {
+    background-color: #cdcdcd;
+    height: 80dvh;
+    width: 100%;
+    box-shadow: 1px 1px 100px #0000003a;
+}
+.leaflet-control-zoom {
+    display: none;
+}
+.footer {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    z-index: 1;
+    bottom: 0;
+    height: 10dvh;
+    width: 100%;
+}
+@keyframes spin {
+    from {transform: rotate(0deg);}
+    to {transform: rotate(360deg);}
+}
+.loading-icon {
+    display: none;
+    animation: spin 0.8s ease-in-out infinite;
+    width: 25px;
+    height: 25px;
+    right: 18%;
+    bottom: 2.75%;
+    border: solid 5px #7e654b;
+    border-right: solid 5px #7e654b6d;
+    border-left: solid 5px #7e654b6d;
+    border-radius: 50px;
+}
+.locate-btn {
+    font-family: 'consolas';
+    position: absolute;
+    color: #7e654b;
+    font-size: smaller;
+    border-radius: 25px;
+    border: solid 1px #7e654b;
+    background-color: #00000000;
+    box-shadow: 0px 0px 15px #00000065;
+    padding: 8px;
+    right: 3%;
+    bottom: 3%;
+}
+.locate-btn:hover {
+    box-shadow: 0px 0px 20px #00000065;
+    background-color: #7e654b15;
+}
+.locate-btn:active {
+    background-color: #00000000;
+    transform: scale(0.98);
+}
