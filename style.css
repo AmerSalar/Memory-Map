@@ -1,5 +1,6 @@
 body {
-    
+    width: 100%;
+    overflow-x: hidden;
     margin: 0%;
     padding: 0%;
     background-color: #dcd4ce;
@@ -7,37 +8,138 @@ body {
     font-family: 'consolas';
     display: flex;
     flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.leaflet-control-attribution {
+    background: transparent !important;
+    color: #ffffffee !important;
+    font-size: 0.6rem !important;
+    font-family: 'consolas';
+}
+.leaflet-control-attribution a {
+    text-decoration: none !important;
+    color: #7e654bee !important;
 }
 .header {
+    top: 0%;
+    z-index: 1050;
     height: 10dvh;
     width: 100%;
+    position: absolute;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
 }
 .logo {
-    width: 37px;
+    backdrop-filter: blur(2px);
+    cursor: pointer;
+    box-shadow: 0px 0px 25px #00000050;
+    text-align: center;
     z-index: 1;
-    padding: 3px;
-    margin: 20px;
+    padding: 7px;
+    margin: 10px;
     border-radius: 25px;
-    border-right: solid 5px #efefef;
-    border-bottom: solid 5px #efefef;
-    font-size: 1.25rem;
+    border-top: solid 3px #ffffffee;
+    border-bottom: solid 2px #ffffffaa;
+    font-size: 1rem;
+    position: absolute;
+    left: 0%;
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
 }
+.message {
+    backdrop-filter: blur(2px);
+    border-radius: 50px;
+    padding: 5px;
+    border-top: solid 2px #ffffffee;
+    border-bottom: solid 1px #ffffff77;
+    color: #cc0000;
+    position: absolute;
+    text-align: center;
+    font-size: 0.7rem;
+    width: 45vw;
+}
+.btn {
+    backdrop-filter: blur(2px);
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
+    cursor: pointer;
+    box-shadow: 0px 0px 25px #00000050;
+    text-align: center;
+    font-family: 'consolas';
+    position: absolute;
+    color: #7e654b;
+    font-size: 0.75rem;
+    border-radius: 25px;
+    border: none;
+    border-top: solid 3px #ffffffee;
+    border-bottom: solid 2px #ffffffaa;
+    background-color: #ffffff20;
+    padding: 8px;
+    transition: 0.3s;
+}
+.btn:hover {
+    background-color: #ffffff40;
+}
+.btn:active {
+    background-color: #ffffff20;
+    transform: scale(0.98);
+}
+.menu-btn {
+    width: 50px;
+    right: 3%;
+}
+@keyframes moveLeft {
+    from {left: -20dvw;}
+    to {left: -105dvw;}
+}
+@keyframes moveRight {
+    from {left: -105dvw;}
+    to {left: -20dvw;}
+}
+.menu-cont {
+    z-index: 1100;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    /* background-color: #ffffff33; */
+    backdrop-filter: blur(4px);
+    border-top: solid 5px #ffffffee;
+    border-bottom: solid 3px #ffffffaa;
+    box-shadow: 30px 0px 30px #00000030;
+    border-radius: 50px;
+    height: 70dvh;
+    width: 100%;
+    position: absolute;
+    top: 10dvh;
+    left: -105dvw;
+}
+.left-trigger {
+    animation: moveLeft 0.3s ease-in-out forwards;
+}
+.right-trigger {
+    animation: moveRight 0.3s ease-in-out forwards;
+}
+
 .map-cont {
     background-color: #cdcdcd;
-    height: 80dvh;
+    height: 100dvh;
     width: 100%;
-    box-shadow: 1px 1px 100px #0000003a;
 }
 .leaflet-control-zoom {
     display: none;
 }
 .footer {
+    position: absolute;
+    bottom: 0;
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    z-index: 1;
-    bottom: 0;
+    z-index: 1050;
     height: 10dvh;
     width: 100%;
 }
@@ -50,31 +152,71 @@ body {
     animation: spin 0.8s ease-in-out infinite;
     width: 25px;
     height: 25px;
-    right: 18%;
-    bottom: 2.75%;
+    position: absolute;
+    right: 50%;
+    bottom: 30%;
     border: solid 5px #7e654b;
-    border-right: solid 5px #7e654b6d;
-    border-left: solid 5px #7e654b6d;
+    border-right: solid 5px #82756822;
+    border-left: solid 5px #82756822;
     border-radius: 50px;
+    background-color: #00000010;
+    box-shadow: 0px 0px 25px #00000030;
 }
 .locate-btn {
-    font-family: 'consolas';
     position: absolute;
-    color: #7e654b;
-    font-size: smaller;
+    box-shadow: 0px 0px 25px #00000030;
+    width: 150px;
+    right: 2%;
+    bottom: 30%;
+}
+.marker-btn {
+    padding: 10px;
+    font-size: 1rem;
+}
+.on-btn {
+    background-color: #00aa0022;
+    font-size: 1.1rem;
+}
+.on-btn:hover {
+    background-color: #00aa0033;
+}
+.off-btn {
+    background-color: #aa000022;
+    font-size: 1rem;
+}
+.off-btn:hover {
+    background-color: #aa000033;
+}
+.popup-message {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    width: 250px;
+    height: 200px;
+    backdrop-filter: blur(5px);
+    border-top: solid 5px #ffffffee;
+    border-bottom: solid 3px #ffffffaa;
     border-radius: 25px;
-    border: solid 1px #7e654b;
-    background-color: #00000000;
-    box-shadow: 0px 0px 15px #00000065;
-    padding: 8px;
-    right: 3%;
-    bottom: 3%;
+    z-index: 1050;
+    text-align: center;
+
+    display: none;
 }
-.locate-btn:hover {
-    box-shadow: 0px 0px 20px #00000065;
-    background-color: #7e654b15;
+.popup-message p {
+    position: absolute;
+    top: 20%;
 }
-.locate-btn:active {
-    background-color: #00000000;
-    transform: scale(0.98);
+.popup-btns-cont {
+    position: absolute;
+    bottom: 20%;
 }
+.yes-btn {
+    position: relative;
+    width: 50px;
+}
+.no-btn {
+    position: relative;
+    width: 50px;
+}
+
