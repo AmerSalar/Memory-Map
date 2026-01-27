@@ -57,6 +57,7 @@ body {
     border-bottom: solid 1px #ffffff77;
     color: #cc0000;
     position: absolute;
+    top: 3dvh;
     text-align: center;
     font-size: 0.7rem;
     width: 45vw;
@@ -170,6 +171,9 @@ body {
     bottom: 30%;
 }
 .marker-btn {
+    bottom: 25%;
+    left: 5%;
+    position: absolute;
     padding: 10px;
     font-size: 1rem;
 }
@@ -188,7 +192,7 @@ body {
     background-color: #aa000033;
 }
 .popup-message {
-    display: flex;
+    display: none;
     justify-content: center;
     align-items: center;
     position: absolute;
@@ -200,8 +204,6 @@ body {
     border-radius: 25px;
     z-index: 1050;
     text-align: center;
-
-    display: none;
 }
 .popup-message p {
     position: absolute;
@@ -218,5 +220,38 @@ body {
 .no-btn {
     position: relative;
     width: 50px;
+}
+.popup-message textarea {
+    backdrop-filter: blur(2px);
+    border: none;
+    border-top: solid 5px #ffffffee;
+    border-bottom: solid 3px #ffffffaa;
+    outline: none;
+    text-align: center;
+    background: transparent;
+    border-radius: 20px;
+}
+.popup-note {
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    width: 250px;
+    height: 200px;
+    backdrop-filter: blur(5px);
+    border-top: solid 5px #ffffffee;
+    border-bottom: solid 3px #ffffffaa;
+    border-radius: 25px;
+    z-index: 1050;
+    text-align: center;
+    display: none;
+}
+.popup-note p {
+    font-size: 0.75rem;
+}
+.cancel-btn {
+    width: 60px;
+    position: absolute;
+    top: 3%;
+    right: 3%;
 }
 

@@ -4,6 +4,13 @@ const menuCont = document.querySelector('.menu-cont');
 const message = document.querySelector('.message');
 const loadingIcon = document.querySelector('.loading-icon');
 const pinBtn = document.querySelector('.marker-btn');
+const popup = document.querySelector('.popup-message');
+const popupText = document.querySelector('.popup-text');
+const note = document.getElementById('note');
+const popupNote = document.querySelector('.popup-note-p');
+const popupNoteCont = document.querySelector('.popup-note');
+const cancelBtn = document.querySelector('.cancel-btn');
+
 let stateOfMenu = 0;
 let stateOfPin = 0;
 function print(input) {
@@ -88,17 +95,32 @@ map.on('locationfound', e => {
     }
     loader(0);
 });
+let mapLastClick = null;
 map.on('click', e => {
-    if(stateOfPin === 1 && e.target._zoom > 15) {
-
-        placePin(e.latlng);
+    if(stateOfPin === 1 && map.getZoom() > 15) {
+        mapLastClick = e.latlng;
+        popMessage('Do you want to place a pin?');
     }
     print(e.latlng);
-    print(e.target._zoom);
+    print(map.getZoom());
 });
+
 function popMessage(message) {
-    
+    popup.style.display = 'flex';
+    popupText.textContent = message;
 }
+
+document.querySelector('.yes-btn').addEventListener('click', e=> {
+    const myNote = note.value;
+    placePin(mapLastClick, myNote);
+    popup.style.display = 'none';
+    note.value = '';
+});
+document.querySelector('.no-btn').addEventListener('click', e=> {
+    note.value = '';
+    popup.style.display = 'none';
+});
+
 function locateMe() {
     loader(1);
     map.locate({
@@ -106,16 +128,28 @@ function locateMe() {
         maximumAge: 0
     });
 }
-function placePin(latlng) {
+function placePin(latlng, note) {
+    togglePin(0);
     const pin = L.circleMarker(latlng, {
-        radius: 6,
+        radius: 8,
         fillColor: '#000099aa',
         color: '#eeeeee',
         weight: 2,
         fillOpacity: 1
     });
+    pin.addEventListener('click', e=> {
+        popNote(note);
+        print(note);
+    });
     pin.addTo(map);
 }
+function popNote(note) {
+    popupNoteCont.style.display = 'flex';
+    popupNote.textContent = note; 
+}
+cancelBtn.addEventListener('click', e=>{
+    popupNoteCont.style.display = 'none';
+});
 
 
 
