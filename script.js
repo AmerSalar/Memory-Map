@@ -1,4 +1,5 @@
 // print(L);
+loadNotes();
 const menuBtn = document.querySelector('.menu-btn');
 const menuCont = document.querySelector('.menu-cont');
 const message = document.querySelector('.message');
@@ -10,6 +11,9 @@ const note = document.getElementById('note');
 const popupNote = document.querySelector('.popup-note-p');
 const popupNoteCont = document.querySelector('.popup-note');
 const cancelBtn = document.querySelector('.cancel-btn');
+const redCheck = document.querySelector('.red-check');
+const greenCheck = document.querySelector('.green-check');
+const blueCheck = document.querySelector('.blue-check');
 
 let stateOfMenu = 0;
 let stateOfPin = 0;
@@ -51,6 +55,13 @@ function togglePin() {
         stateOfPin = 0;
     }
 }
+function toggleColor(color) {
+    const colors = document.querySelectorAll('.color-check');
+    colors.forEach(e => {
+        e.classList.remove('active-check');
+    });
+    if(color) color.classList.add('active-check');
+}
 menuBtn.addEventListener('click', e => {
     toggleMenu();
 })
@@ -58,16 +69,16 @@ pinBtn.addEventListener('click', e => {
     togglePin();
 })
 
-
 const map = L.map('map').setView([33.3, 44.4], 6);
 map.attributionControl.setPrefix('');
 let sateliteUrl = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
-
 let sateliteLayer = L.tileLayer(sateliteUrl, {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     maxZoom: 19
 });
 sateliteLayer.addTo(map);
+const noteClusters = L.markerClusterGroup();
+map.addLayer(noteClusters);
 
 const locateBtn = document.querySelector('.locate-btn');
 locateBtn.addEventListener('click', e =>{
@@ -89,7 +100,8 @@ map.on('locationfound', e => {
             color: '#fff',
             weight: 2,
             fillOpacity: 1
-        }).addTo(map);
+        });
+        noteClusters.addLayer(userDot);
     } else {
         userDot.setLatLng(e.latlng);
     }
@@ -130,9 +142,10 @@ function locateMe() {
 }
 function placePin(latlng, note) {
     togglePin(0);
+    const fColor = checkColor();
     const pin = L.circleMarker(latlng, {
         radius: 8,
-        fillColor: '#000099aa',
+        fillColor: fColor,
         color: '#eeeeee',
         weight: 2,
         fillOpacity: 1
@@ -141,7 +154,8 @@ function placePin(latlng, note) {
         popNote(note);
         print(note);
     });
-    pin.addTo(map);
+    toggleColor();
+    noteClusters.addLayer(pin);
 }
 function popNote(note) {
     popupNoteCont.style.display = 'flex';
@@ -150,6 +164,57 @@ function popNote(note) {
 cancelBtn.addEventListener('click', e=>{
     popupNoteCont.style.display = 'none';
 });
+redCheck.addEventListener('click', e => {
+    toggleColor(redCheck);
+});
+blueCheck.addEventListener('click', e => {
+    toggleColor(blueCheck);
+});
+greenCheck.addEventListener('click', e => {
+    toggleColor(greenCheck);
+});
+function checkColor() {
+    const colors = document.querySelectorAll('.color-check');
+    let activeColor = null;
+    colors.forEach(e => {
+        if(e.classList.contains('active-check')) {
+            activeColor = e;
+        }
+    });
+    if(activeColor == redCheck) return '#aa000075';
+    else if(activeColor == greenCheck) return '#00aa0075';
+    else if(activeColor == blueCheck) return '#0000aa75';
+    else return '#dddddd';
+}
+async function loadNotes() {
+    const response = await fetch('notes.json');
+    const notes = await response.json();
+    notes.forEach(n => {
+        loadPin(n.lat, n.lng, n.note, n.color);
+    });
+}
+
+function loadPin(lat, lng, note, color) {
+    const latlng = {
+        lat: lat,
+        lng: lng
+    };
+    let pinColor = '#dddddd';
+    if(color == "red") pinColor = '#aa000075';
+    else if(color == "green") pinColor = '#00aa0075';
+    else if(color == "blue") pinColor = '#0000aa75';
+    const pin = L.circleMarker(latlng, {
+        radius: 8,
+        fillColor: pinColor,
+        color: '#eeeeee',
+        weight: 2,
+        fillOpacity: 1
+    });
+    pin.addEventListener('click', e=> {
+        popNote(note);
+    });
+    noteClusters.addLayer(pin);
+}
 
 
 

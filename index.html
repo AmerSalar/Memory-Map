@@ -4,7 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Business Map</title>
+
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -15,8 +18,13 @@
     </div>
     <div class="map-cont" id="map"></div>
     <div class="popup-message">
-        <p class="popup-text"></p>
+        <p class="popup-text">Hey there</p>
         <textarea name="note" id="note" placeholder="Your note"></textarea>
+        <div class="pin-colors-cont">
+            <div class="red-check color-check"></div>
+            <div class="green-check color-check"></div>
+            <div class="blue-check color-check"></div>
+        </div>
         <div class="popup-btns-cont">
            <button class="yes-btn btn">Yes</button>
            <button class="no-btn btn">No</button>
@@ -38,11 +46,10 @@
     
 
 
-
-
-
-
+    
+    
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

@@ -108,8 +108,8 @@ body {
     align-items: center;
     /* background-color: #ffffff33; */
     backdrop-filter: blur(4px);
-    border-top: solid 5px #ffffffee;
-    border-bottom: solid 3px #ffffffaa;
+    border-top: solid 3px #ffffffee;
+    border-bottom: solid 1px #ffffffaa;
     box-shadow: 30px 0px 30px #00000030;
     border-radius: 50px;
     height: 70dvh;
@@ -193,6 +193,7 @@ body {
 }
 .popup-message {
     display: none;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     position: absolute;
@@ -207,11 +208,11 @@ body {
 }
 .popup-message p {
     position: absolute;
-    top: 20%;
+    top: 10%;
 }
 .popup-btns-cont {
     position: absolute;
-    bottom: 20%;
+    bottom: 5%;
 }
 .yes-btn {
     position: relative;
@@ -220,6 +221,37 @@ body {
 .no-btn {
     position: relative;
     width: 50px;
+}
+.pin-colors-cont {
+    display: flex;
+    position: absolute;
+    flex-direction: row;
+    bottom: 24%;
+}
+.color-check {
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
+    cursor: pointer;
+    box-shadow: 0px 0px 25px #00000050;
+    border-radius: 25px;
+    border: none;
+    border-top: solid 3px #ffffffee;
+    border-bottom: solid 2px #ffffffaa;
+    padding: 7.5px;
+    margin: 5px;
+    position: relative;
+}
+.red-check {
+    background-color: #aa000075;
+}
+.green-check {
+    background-color: #00aa0075;
+}
+.blue-check {
+    background-color: #0000aa75;
+}
+.active-check {
+    transform: scale(1.5);
 }
 .popup-message textarea {
     backdrop-filter: blur(2px);
@@ -230,6 +262,7 @@ body {
     text-align: center;
     background: transparent;
     border-radius: 20px;
+    
 }
 .popup-note {
     justify-content: center;
@@ -254,4 +287,15 @@ body {
     top: 3%;
     right: 3%;
 }
+.marker-cluster {
+    background: transparent !important;
+}
+.marker-cluster div{
+    background-color: #0000ff33 !important;
+    border-top: solid 2px #ffffffee;
+    border-bottom: solid 0.5px #ffffffee;
+    backdrop-filter: blur(5px);
+    transform: scale(0.75);
+}
+
 
