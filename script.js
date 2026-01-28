@@ -1,5 +1,7 @@
 // print(L);
-loadNotes();
+window.addEventListener('load', () => {
+    loadNotes();
+});
 const menuBtn = document.querySelector('.menu-btn');
 const menuCont = document.querySelector('.menu-cont');
 const message = document.querySelector('.message');
@@ -140,9 +142,16 @@ function locateMe() {
         maximumAge: 0
     });
 }
-function placePin(latlng, note) {
+async function placePin(latlng, note) {
     togglePin(0);
     const fColor = checkColor();
+    print(latlng.lat);
+    saveToFirebase({
+        lat: latlng.lat,
+        lng: latlng.lng,
+        note: note,
+        color: fColor
+    });
     const pin = L.circleMarker(latlng, {
         radius: 8,
         fillColor: fColor,
@@ -152,7 +161,6 @@ function placePin(latlng, note) {
     });
     pin.addEventListener('click', e=> {
         popNote(note);
-        print(note);
     });
     toggleColor();
     noteClusters.addLayer(pin);
@@ -186,26 +194,15 @@ function checkColor() {
     else if(activeColor == blueCheck) return '#0000aa75';
     else return '#dddddd';
 }
-async function loadNotes() {
-    const response = await fetch('notes.json');
-    const notes = await response.json();
-    notes.forEach(n => {
-        loadPin(n.lat, n.lng, n.note, n.color);
-    });
-}
 
 function loadPin(lat, lng, note, color) {
     const latlng = {
         lat: lat,
         lng: lng
     };
-    let pinColor = '#dddddd';
-    if(color == "red") pinColor = '#aa000075';
-    else if(color == "green") pinColor = '#00aa0075';
-    else if(color == "blue") pinColor = '#0000aa75';
     const pin = L.circleMarker(latlng, {
         radius: 8,
-        fillColor: pinColor,
+        fillColor: color,
         color: '#eeeeee',
         weight: 2,
         fillOpacity: 1
@@ -215,6 +212,33 @@ function loadPin(lat, lng, note, color) {
     });
     noteClusters.addLayer(pin);
 }
+async function saveToFirebase(noteObj) {
+    try{
+        const memory = {
+            lat: noteObj.lat,
+            lng: noteObj.lng,
+            note: noteObj.note,
+            color: noteObj.color
+        }
+        const docRef = await window.addDoc(window.collection(window.db, "memories"), memory); 
+        print('memory saved: '+docRef.id);
+    } catch(e) {
+        print('Saving to firebase had error!');
+    }
+}
+async function loadNotes() {
+    loader(1);
+    const snapshot = await window.getDocs(window.collection(window.db, "memories"));
+    
+    snapshot.forEach(doc => {
+        const pin = doc.data();
+        loadPin(pin.lat, pin.lng, pin.note, pin.color);
+    });
+    await sleep(250);
+    loader(0);
+}
+
+
 
 
 
