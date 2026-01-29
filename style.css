@@ -196,7 +196,7 @@ body {
     background-color: #aa000033;
 }
 .popup-message {
-    display: flex;
+    display: none;
     flex-direction: column;
     justify-content: center;
     align-items: center;
@@ -240,7 +240,7 @@ body {
     border-radius: 20px;
 }
 .popup-note {
-    display: flex;
+    display: none;
     flex-direction: column;
     justify-content: center;
     align-items: center;
