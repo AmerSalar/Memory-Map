@@ -1,6 +1,7 @@
 :root {
     --color: #000000;
     --alt-color: #00000099;
+    --text: #554433;
 }
 body {
     width: 100%;
@@ -8,7 +9,7 @@ body {
     margin: 0%;
     padding: 0%;
     background-color: #dcd4ce;
-    color: #7e654b;
+    color: var(--text);
     font-family: 'consolas';
     display: flex;
     flex-direction: column;
@@ -23,7 +24,7 @@ body {
 }
 .leaflet-control-attribution a {
     text-decoration: none !important;
-    color: #7e654bee !important;
+    color: var(--text) !important;
 }
 .header {
     top: 0%;
@@ -75,7 +76,7 @@ body {
     text-align: center;
     font-family: 'consolas';
     position: absolute;
-    color: #7e654b;
+    color: var(--text);
     font-size: 0.75rem;
     border-radius: 25px;
     border: none;
@@ -122,6 +123,9 @@ body {
     top: 10dvh;
     left: -105dvw;
 }
+.fun {
+    right: 5%;
+}
 .left-trigger {
     animation: moveLeft 0.3s ease-in-out forwards;
 }
@@ -160,7 +164,7 @@ body {
     position: absolute;
     right: 50%;
     bottom: 30%;
-    border: solid 5px #7e654b;
+    border: solid 5px var(--text);
     border-right: solid 5px #82756822;
     border-left: solid 5px #82756822;
     border-radius: 50px;
@@ -275,7 +279,7 @@ body {
     background: transparent !important;
 }
 .marker-cluster div{
-    background-color: #00008090 !important;
+    background-color: var(--text) !important;
     color: #fff !important;
     border-top: solid 2px #ffffffee;
     border-bottom: solid 0.5px #ffffffee;

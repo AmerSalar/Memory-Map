@@ -75,6 +75,9 @@ menuBtn.addEventListener('click', e => {
     toggleMenu();
     getPinDate();
 })
+document.querySelector('.fun').addEventListener('click', () => {
+    toggleMenu();
+})
 pinBtn.addEventListener('click', e => {
     togglePin();
 })
@@ -136,9 +139,11 @@ function popMessage(message) {
 
 document.querySelector('.yes-btn').addEventListener('click', e=> {
     const myNote = note.value;
-    placeNote(mapLastClick, myNote);
+    const date = getPinDate();
+    placeNote(mapLastClick, myNote, date);
     popup.style.display = 'none';
     note.value = '';
+    colorPicker.value = 0;
 });
 document.querySelector('.no-btn').addEventListener('click', e=> {
     note.value = '';
@@ -152,10 +157,9 @@ function locateMe() {
         maximumAge: 0
     });
 }
-async function placeNote(latlng, note) {
+async function placeNote(latlng, note, date) {
     togglePin();
     const fColor = getPinColor();
-    const date = getPinDate();
     print(latlng.lat);
     saveToFirebase({
         lat: latlng.lat,
@@ -167,12 +171,12 @@ async function placeNote(latlng, note) {
     const pin = L.circleMarker(latlng, {
         radius: 8,
         fillColor: fColor,
-        color: '#eeeeee',
-        weight: 2,
+        color: '#000',
+        weight: 1,
         fillOpacity: 1
     });
     pin.addEventListener('click', e=> {
-        popNote(note);
+        popNote(note, date);
     });
     toggleColor();
     noteClusters.addLayer(pin);
@@ -230,8 +234,8 @@ function loadNote(lat, lng, note, color, date) {
     const pin = L.circleMarker(latlng, {
         radius: 8,
         fillColor: color,
-        color: '#777',
-        weight: 2,
+        color: '#000',
+        weight: 1,
         fillOpacity: 1
     });
     pin.addEventListener('click', e=> {
