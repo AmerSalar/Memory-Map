@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Business Map</title>
 
+    
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css">
@@ -19,11 +20,10 @@
     <div class="map-cont" id="map"></div>
     <div class="popup-message">
         <p class="popup-text">Hey there</p>
-        <textarea name="note" id="note" placeholder="Your note"></textarea>
+        <textarea name="note" id="note" placeholder="Your note" maxlength="250"></textarea>
         <div class="pin-colors-cont">
-            <div class="red-check color-check"></div>
-            <div class="green-check color-check"></div>
-            <div class="blue-check color-check"></div>
+            <input type="range" name="color-picker" id="color-picker" min="0" max="47" step="1" value="0">
+            <input type="date" id="date-picker">
         </div>
         <div class="popup-btns-cont">
            <button class="yes-btn btn">Yes</button>
@@ -33,6 +33,7 @@
     <div class="popup-note">
         <button class="cancel-btn btn">Cancel</button>
         <p class="popup-note-p">My tea</p>
+        <p class="popup-note-date">01-01-2026</p>
     </div>
     <div class="menu-cont">
         
@@ -52,7 +53,6 @@
     <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
     <script src="script.js"></script>
     <script type="module">
-    // 1. Added getFirestore and the collection/doc tools you'll need later
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
     import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-analytics.js";
     import { getFirestore, collection, addDoc, getDocs, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
@@ -67,23 +67,16 @@
         measurementId: "G-1GVXMX5K6G"
     };
 
-    // 2. Initialize the Engine
     const app = initializeApp(firebaseConfig);
     const analytics = getAnalytics(app);
-    
-    // 3. CREATE THE DB VARIABLE 🛡️
     const db = getFirestore(app);
-
-    // 4. THE BRIDGE: Export everything to the 'window'
-    // This allows your separate script.js file to "see" these functions.
     window.db = db;
     window.collection = collection;
     window.addDoc = addDoc;
     window.getDocs = getDocs;
     window.doc = doc;
     window.deleteDoc = deleteDoc;
-
-    console.log("Firebase & Firestore are ready! ☁️");
+    print('Firebase ready.')
 </script>
 </body>
 </html>

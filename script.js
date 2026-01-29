@@ -2,6 +2,13 @@
 window.addEventListener('load', () => {
     loadNotes();
 });
+
+const datePicker = document.getElementById('date-picker');
+const todayDate = new Date();
+const today = todayDate.toISOString().split('T')[0];
+datePicker.max = today;
+datePicker.value = today;
+
 const menuBtn = document.querySelector('.menu-btn');
 const menuCont = document.querySelector('.menu-cont');
 const message = document.querySelector('.message');
@@ -66,6 +73,7 @@ function toggleColor(color) {
 }
 menuBtn.addEventListener('click', e => {
     toggleMenu();
+    getPinDate();
 })
 pinBtn.addEventListener('click', e => {
     togglePin();
@@ -79,7 +87,9 @@ let sateliteLayer = L.tileLayer(sateliteUrl, {
     maxZoom: 19
 });
 sateliteLayer.addTo(map);
-const noteClusters = L.markerClusterGroup();
+const noteClusters = L.markerClusterGroup({
+    maxClusterRadius:30,
+});
 map.addLayer(noteClusters);
 
 const locateBtn = document.querySelector('.locate-btn');
@@ -97,13 +107,13 @@ map.on('locationfound', e => {
     map.setView(e.latlng, 16);
     if(!userDot) {
         userDot = L.circleMarker(e.latlng,{
-            radius: 8,
+            radius: 10,
             fillColor: '#7e654b', 
             color: '#fff',
             weight: 2,
             fillOpacity: 1
         });
-        noteClusters.addLayer(userDot);
+        userDot.addTo(map);
     } else {
         userDot.setLatLng(e.latlng);
     }
@@ -126,7 +136,7 @@ function popMessage(message) {
 
 document.querySelector('.yes-btn').addEventListener('click', e=> {
     const myNote = note.value;
-    placePin(mapLastClick, myNote);
+    placeNote(mapLastClick, myNote);
     popup.style.display = 'none';
     note.value = '';
 });
@@ -142,15 +152,17 @@ function locateMe() {
         maximumAge: 0
     });
 }
-async function placePin(latlng, note) {
-    togglePin(0);
-    const fColor = checkColor();
+async function placeNote(latlng, note) {
+    togglePin();
+    const fColor = getPinColor();
+    const date = getPinDate();
     print(latlng.lat);
     saveToFirebase({
         lat: latlng.lat,
         lng: latlng.lng,
         note: note,
-        color: fColor
+        color: fColor,
+        date: date
     });
     const pin = L.circleMarker(latlng, {
         radius: 8,
@@ -165,37 +177,52 @@ async function placePin(latlng, note) {
     toggleColor();
     noteClusters.addLayer(pin);
 }
-function popNote(note) {
+function popNote(note, date) {
     popupNoteCont.style.display = 'flex';
     popupNote.textContent = note; 
+    document.querySelector('.popup-note-date').textContent = date;
 }
+
 cancelBtn.addEventListener('click', e=>{
     popupNoteCont.style.display = 'none';
 });
-redCheck.addEventListener('click', e => {
-    toggleColor(redCheck);
+const colorPicker = document.getElementById('color-picker');
+colorPicker.addEventListener('input', (e) => {
+    const val = parseInt(e.target.value);
+    let color;
+    if(val === 0) {
+        color = "hsl(0, 0%, 0%)";
+    } else if (val === 47) {
+        color = "hsl(0, 0%, 100%)";
+    } else {
+        const hue = (val - 1) * (360/45);
+        color = `hsl(${hue}, 100%, 50%)`;
+    }
+    const colorHex = hslToHex(color);
+    const altColorHex = colorHex + "90";
+    document.documentElement.style.setProperty("--color", colorHex);
+    document.documentElement.style.setProperty("--alt-color", altColorHex);
 });
-blueCheck.addEventListener('click', e => {
-    toggleColor(blueCheck);
-});
-greenCheck.addEventListener('click', e => {
-    toggleColor(greenCheck);
-});
-function checkColor() {
-    const colors = document.querySelectorAll('.color-check');
-    let activeColor = null;
-    colors.forEach(e => {
-        if(e.classList.contains('active-check')) {
-            activeColor = e;
-        }
-    });
-    if(activeColor == redCheck) return '#aa000075';
-    else if(activeColor == greenCheck) return '#00aa0075';
-    else if(activeColor == blueCheck) return '#0000aa75';
-    else return '#dddddd';
-}
+// This hslToHex is not mine
+function hslToHex(hsl) {
+    const dummy = document.createElement("div");
+    dummy.style.color = hsl;
+    document.body.appendChild(dummy);
+    const rgb = window.getComputedStyle(dummy).color;
+    document.body.removeChild(dummy);
 
-function loadPin(lat, lng, note, color) {
+    const res = rgb.match(/\d+/g).map(x => parseInt(x).toString(16).padStart(2, '0')).join('');
+    return `#${res}`;
+}
+function getPinColor() {
+    const color = document.documentElement.style.getPropertyValue("--alt-color");
+    return color;
+}
+function getPinDate() {
+    const date = document.getElementById('date-picker').value;
+    return date;
+}
+function loadNote(lat, lng, note, color, date) {
     const latlng = {
         lat: lat,
         lng: lng
@@ -203,12 +230,12 @@ function loadPin(lat, lng, note, color) {
     const pin = L.circleMarker(latlng, {
         radius: 8,
         fillColor: color,
-        color: '#eeeeee',
+        color: '#777',
         weight: 2,
         fillOpacity: 1
     });
     pin.addEventListener('click', e=> {
-        popNote(note);
+        popNote(note, date);
     });
     noteClusters.addLayer(pin);
 }
@@ -218,7 +245,8 @@ async function saveToFirebase(noteObj) {
             lat: noteObj.lat,
             lng: noteObj.lng,
             note: noteObj.note,
-            color: noteObj.color
+            color: noteObj.color,
+            date: noteObj.date
         }
         const docRef = await window.addDoc(window.collection(window.db, "memories"), memory); 
         print('memory saved: '+docRef.id);
@@ -232,11 +260,12 @@ async function loadNotes() {
     
     snapshot.forEach(doc => {
         const pin = doc.data();
-        loadPin(pin.lat, pin.lng, pin.note, pin.color);
+        loadNote(pin.lat, pin.lng, pin.note, pin.color, pin.date);
     });
     await sleep(250);
     loader(0);
 }
+
 
 
 
