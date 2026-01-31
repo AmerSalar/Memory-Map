@@ -1,4 +1,4 @@
-// print(L);
+import {MemoryApp} from "./firebase.js";
 window.addEventListener('load', () => {
     loadNotes();
 });
@@ -20,21 +20,21 @@ const note = document.getElementById('note');
 const popupNote = document.querySelector('.popup-note-p');
 const popupNoteCont = document.querySelector('.popup-note');
 const cancelBtn = document.querySelector('.cancel-btn');
-const redCheck = document.querySelector('.red-check');
-const greenCheck = document.querySelector('.green-check');
-const blueCheck = document.querySelector('.blue-check');
 
 let stateOfMenu = 0;
 let stateOfPin = 0;
-function print(input) {
+function log(input) {
     console.log(input);
 }
+
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
+
 function refresh() {
     location.reload();
 }
+
 function loader(toggle) {
     if(toggle == 1) {
         loadingIcon.style.display = 'block';
@@ -42,7 +42,9 @@ function loader(toggle) {
         loadingIcon.style.display = 'none';
     }
 }
+
 function toggleMenu() {
+    togglePopups();
     menuCont.classList.remove('left-trigger', 'right-trigger');
     void menuCont.offsetWidth;
     if(stateOfMenu === 1) {
@@ -54,6 +56,7 @@ function toggleMenu() {
         stateOfMenu = 1;
     }
 }
+
 function togglePin() {
     pinBtn.classList.remove('on-btn', 'off-btn');
     if(stateOfPin === 0) {
@@ -64,34 +67,36 @@ function togglePin() {
         stateOfPin = 0;
     }
 }
-function toggleColor(color) {
-    const colors = document.querySelectorAll('.color-check');
-    colors.forEach(e => {
-        e.classList.remove('active-check');
-    });
-    if(color) color.classList.add('active-check');
+
+function togglePopups() {
+    popup.style.display = 'none';
+    popupNoteCont.style.display = 'none';
 }
 menuBtn.addEventListener('click', e => {
     toggleMenu();
     getPinDate();
 })
+
 document.querySelector('.fun').addEventListener('click', () => {
     toggleMenu();
 })
+
 pinBtn.addEventListener('click', e => {
     togglePin();
 })
 
 const map = L.map('map').setView([33.3, 44.4], 6);
 map.attributionControl.setPrefix('');
-let sateliteUrl = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
-let sateliteLayer = L.tileLayer(sateliteUrl, {
+let layerUrl = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+let layer = L.tileLayer(layerUrl, {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     maxZoom: 19
 });
-sateliteLayer.addTo(map);
+layer.addTo(map);
 const noteClusters = L.markerClusterGroup({
     maxClusterRadius:30,
+    spiderfyOnMaxZoom: true,
+    zoomToBoundsOnClick: true
 });
 map.addLayer(noteClusters);
 
@@ -122,17 +127,29 @@ map.on('locationfound', e => {
     }
     loader(0);
 });
+map.on('locationerror', e => {
+    loader(0);
+    message.textContent = 'Something went wrong! try again.';
+})
 let mapLastClick = null;
 map.on('click', e => {
-    if(stateOfPin === 1 && map.getZoom() > 15) {
-        mapLastClick = e.latlng;
-        popMessage('Do you want to place a pin?');
+    if(stateOfPin == 1) {
+        if(map.getZoom() <= 15) {
+        message.textContent = "Please zoom in more to place a pin.";
+        setTimeout( () => {
+            message.textContent = '';
+        }, 2500);
+        }
+        if(map.getZoom() > 15) {
+            mapLastClick = e.latlng;
+            popMessage('Do you want to place a pin?');
+        }
     }
-    print(e.latlng);
-    print(map.getZoom());
+    log(e.latlng);
 });
 
 function popMessage(message) {
+    if(stateOfMenu === 1) toggleMenu();
     popup.style.display = 'flex';
     popupText.textContent = message;
 }
@@ -145,8 +162,10 @@ document.querySelector('.yes-btn').addEventListener('click', e=> {
     note.value = '';
     colorPicker.value = 0;
 });
+
 document.querySelector('.no-btn').addEventListener('click', e=> {
     note.value = '';
+    datePicker.value = today;
     popup.style.display = 'none';
 });
 
@@ -154,34 +173,45 @@ function locateMe() {
     loader(1);
     map.locate({
         enableHighAccuracy: true,
-        maximumAge: 0
+        maximumAge: 0,
+        timeout: 10000
     });
 }
+
 async function placeNote(latlng, note, date) {
     togglePin();
     const fColor = getPinColor();
-    print(latlng.lat);
-    saveToFirebase({
+    const pinID = await saveToFirebase({
         lat: latlng.lat,
         lng: latlng.lng,
         note: note,
         color: fColor,
         date: date
     });
-    const pin = L.circleMarker(latlng, {
-        radius: 8,
-        fillColor: fColor,
-        color: '#000',
-        weight: 1,
-        fillOpacity: 1
-    });
-    pin.addEventListener('click', e=> {
-        popNote(note, date);
-    });
-    toggleColor();
-    noteClusters.addLayer(pin);
+    if(!pinID) {
+        message.textContent = 'Could not save pin. Check your connection. Try again later.';
+        setTimeout( () => {
+            message.textContent = '';
+        }, 2500);
+    } else {
+        const pin = L.circleMarker(latlng, {
+            radius: 8,
+            fillColor: fColor,
+            color: '#000',
+            weight: 1,
+            fillOpacity: 0.9
+        });
+        pin.addEventListener('click', e=> {
+            popNote(note, date, pinID);
+        });
+        noteClusters.addLayer(pin);
+    }  
 }
-function popNote(note, date) {
+
+function popNote(note, date, id) {
+    if(stateOfMenu === 1) toggleMenu();
+    const pinID = id;
+    // log('Pin ID: '+pinID);
     popupNoteCont.style.display = 'flex';
     popupNote.textContent = note; 
     document.querySelector('.popup-note-date').textContent = date;
@@ -190,43 +220,34 @@ function popNote(note, date) {
 cancelBtn.addEventListener('click', e=>{
     popupNoteCont.style.display = 'none';
 });
+
 const colorPicker = document.getElementById('color-picker');
 colorPicker.addEventListener('input', (e) => {
     const val = parseInt(e.target.value);
     let color;
     if(val === 0) {
         color = "hsl(0, 0%, 0%)";
-    } else if (val === 47) {
+    } else if (val === 63) {
         color = "hsl(0, 0%, 100%)";
     } else {
-        const hue = (val - 1) * (360/45);
+        const hue = (val - 1) * (360/61);
         color = `hsl(${hue}, 100%, 50%)`;
     }
-    const colorHex = hslToHex(color);
-    const altColorHex = colorHex + "90";
-    document.documentElement.style.setProperty("--color", colorHex);
-    document.documentElement.style.setProperty("--alt-color", altColorHex);
+    document.documentElement.style.setProperty("--color", color);
 });
-// This hslToHex is not mine
-function hslToHex(hsl) {
-    const dummy = document.createElement("div");
-    dummy.style.color = hsl;
-    document.body.appendChild(dummy);
-    const rgb = window.getComputedStyle(dummy).color;
-    document.body.removeChild(dummy);
 
-    const res = rgb.match(/\d+/g).map(x => parseInt(x).toString(16).padStart(2, '0')).join('');
-    return `#${res}`;
-}
 function getPinColor() {
-    const color = document.documentElement.style.getPropertyValue("--alt-color");
+    const color = document.documentElement.style.getPropertyValue("--color");
     return color;
 }
+
 function getPinDate() {
     const date = document.getElementById('date-picker').value;
+    if(date > today) return today;
     return date;
 }
-function loadNote(lat, lng, note, color, date) {
+
+function loadNote(lat, lng, note, color, date, id) {
     const latlng = {
         lat: lat,
         lng: lng
@@ -236,38 +257,38 @@ function loadNote(lat, lng, note, color, date) {
         fillColor: color,
         color: '#000',
         weight: 1,
-        fillOpacity: 1
+        fillOpacity: 0.9
     });
     pin.addEventListener('click', e=> {
-        popNote(note, date);
+        popNote(note, date, id);
     });
     noteClusters.addLayer(pin);
 }
-async function saveToFirebase(noteObj) {
+
+async function saveToFirebase(memory) {
     try{
-        const memory = {
-            lat: noteObj.lat,
-            lng: noteObj.lng,
-            note: noteObj.note,
-            color: noteObj.color,
-            date: noteObj.date
-        }
-        const docRef = await window.addDoc(window.collection(window.db, "memories"), memory); 
-        print('memory saved: '+docRef.id);
+        const id = await MemoryApp.save(memory); 
+        log('memory saved: '+id);
+        return id;
     } catch(e) {
-        print('Saving to firebase had error!');
+        log('Saving to firebase had error!');
+        return null;
     }
 }
+
 async function loadNotes() {
     loader(1);
-    const snapshot = await window.getDocs(window.collection(window.db, "memories"));
-    
-    snapshot.forEach(doc => {
-        const pin = doc.data();
-        loadNote(pin.lat, pin.lng, pin.note, pin.color, pin.date);
-    });
-    await sleep(250);
-    loader(0);
+    try {
+        const snapshot = await MemoryApp.load();
+        snapshot.forEach(pin => {
+            loadNote(pin.lat, pin.lng, pin.note, pin.color, pin.date, pin.id);
+        });
+        await sleep(250);
+    } catch(e) {
+        log('Loading from firebase had error!' + e);
+    } finally {
+        loader(0);
+    }  
 }
 
 

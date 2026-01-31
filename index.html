@@ -1,16 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Business Map</title>
+    <title>Ameers Memory Map</title>
 
-    
+
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css">
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
     <div class="header">
         <h1 class="logo" onclick="refresh()">Ameer</h1>
@@ -22,22 +24,22 @@
         <p class="popup-text">Hey there</p>
         <textarea name="note" id="note" placeholder="Your note" maxlength="200"></textarea>
         <div class="pin-colors-cont">
-            <input type="range" name="color-picker" id="color-picker" min="0" max="47" step="1" value="0">
+            <input type="range" name="color-picker" id="color-picker" min="0" max="63" step="1" value="0">
             <input type="date" id="date-picker">
         </div>
         <div class="popup-btns-cont">
-           <button class="yes-btn btn">Yes</button>
-           <button class="no-btn btn">No</button>
+            <button class="yes-btn btn">Yes</button>
+            <button class="no-btn btn">No</button>
         </div>
     </div>
     <div class="popup-note">
         <button class="cancel-btn btn">Cancel</button>
-        <p class="popup-note-p">My tea</p>
-        <p class="popup-note-date">01-01-2026</p>
+        <p class="popup-note-p">Placeholder text</p>
+        <p class="popup-note-date">Placeholder date</p>
     </div>
     <div class="menu-cont">
         <div class="fun btn">
-            This is just to flex my UI skills 
+            This is just to flex my UI skills
             <br><br><br>
             <div><b>~(￣▽￣)~</b></div>
         </div>
@@ -48,39 +50,15 @@
         <button class="locate-btn btn">Locate</button>
     </div>
 
-    
 
 
-    
-    
+
+
+
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
-    <script src="script.js"></script>
-    <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-analytics.js";
-    import { getFirestore, collection, addDoc, getDocs, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
-
-    const firebaseConfig = {
-        apiKey: "AIzaSyB6f1kgrBT9Bsdj4ri6KOY_rnwA2eiDWEE",
-        authDomain: "memorymap-ameer.firebaseapp.com",
-        projectId: "memorymap-ameer",
-        storageBucket: "memorymap-ameer.firebasestorage.app",
-        messagingSenderId: "305904878472",
-        appId: "1:305904878472:web:aef3892ee80b290d4f703d",
-        measurementId: "G-1GVXMX5K6G"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const analytics = getAnalytics(app);
-    const db = getFirestore(app);
-    window.db = db;
-    window.collection = collection;
-    window.addDoc = addDoc;
-    window.getDocs = getDocs;
-    window.doc = doc;
-    window.deleteDoc = deleteDoc;
-    print('Firebase ready.')
-</script>
+    <script type="module" src="script.js"></script>
+    <script type="module" src="firebase.js"></script>
 </body>
+
 </html>
