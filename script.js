@@ -1,4 +1,4 @@
-import {MemoryApp} from "./firebase.js";
+import { MemoryApp } from "./firebase.js";
 window.addEventListener('load', () => {
     loadNotes();
 });
