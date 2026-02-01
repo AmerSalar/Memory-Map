@@ -1,0 +1,29 @@
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes moveLeft {
+    from {
+        left: -20dvw;
+    }
+
+    to {
+        left: -105dvw;
+    }
+}
+
+@keyframes moveRight {
+    from {
+        left: -105dvw;
+    }
+
+    to {
+        left: -20dvw;
+    }
+}
